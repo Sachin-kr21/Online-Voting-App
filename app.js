@@ -5,9 +5,10 @@ var cookieParser = require("cookie-parser");
 const { Election, Admin , Voter , Question , Option } = require("./models");
 const bodyParser = require("body-parser");
 const path = require("path");
+const connectEnsureLogin = require("connect-ensure-login");
 const passport = require("passport");
-const LocalStrategy = require("passport-local");
 const session = require("express-session");
+const LocalStrategy = require("passport-local");
 
 
 app.use(bodyParser.json());
@@ -77,10 +78,10 @@ app.get("/", async (request, response) => {
 
   });
 
-app.get("/admin", async (request, response) => {
+app.get("/login", async (request, response) => {
     
     
-    response.render("admin");
+    response.render("signin");
 
   });
 
@@ -129,8 +130,18 @@ app.get("/signup", async (request, response) => {
 
   });
  
+  app.get("/signout", (request, response, next) => {
+    request.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      response.redirect("/");
+    });
+  });
+
   app.get(
     "/elections/:id/voters",
+    connectEnsureLogin.ensureLoggedIn(),
     
     
     async (request, response) => {
@@ -160,16 +171,18 @@ app.get("/signup", async (request, response) => {
   );
 
 
-
+  
   app.get(
     "/elections",
-    
+    connectEnsureLogin.ensureLoggedIn(),
     async (request, response) => {
-      const allElections = await Election.getElections();
+      const loggedInAdmin = request.user.id;
+      const allElections = await Election.getElections(loggedInAdmin);
+      // console.log("9999999999999",allElections)
       // console.log("11111111111111111",allElections)
       if (request.accepts("html")) {
         response.render("elections", {
-          title: "Todo application",
+          title: "Elections",
           allElections
           
         });
@@ -181,6 +194,7 @@ app.get("/signup", async (request, response) => {
 
   app.post(
     "/elections",
+    connectEnsureLogin.ensureLoggedIn(),
     
     async function (request, response) {
       
@@ -189,9 +203,10 @@ app.get("/signup", async (request, response) => {
 
         await Election.createElection({
           name: request.body.name,
+          adminId: request.user.id
         
         });
-        console.log("11111111111title",request.body.name)
+        // console.log("11111111111title",request.body.name)
         // console.log("11111111111name",request)
         // const obj = JSON.parse("2222",JSON.stringify(request.body)); // req.body = [Object: null prototype] { title: 'product' }
 
@@ -212,6 +227,7 @@ app.get("/signup", async (request, response) => {
 
   app.post(
     "/elections/:id/voters",
+    connectEnsureLogin.ensureLoggedIn(),
     
     async function (request, response) {
       
@@ -236,6 +252,7 @@ app.get("/signup", async (request, response) => {
 
   app.get(
     "/elections/:id",
+    connectEnsureLogin.ensureLoggedIn(),
 
     async (request, response) => {
       try {
@@ -271,8 +288,47 @@ app.get("/signup", async (request, response) => {
     }
   );
 
+  // app.put(
+  //   "/elections/:id/start",
+  //   connectEnsureLogin.ensureLoggedIn(),
+  //   async (request, response) => {
+  //     try {
+  //       const election = await Election.findByPk(request.params.id);
+  //       // const questions = await election.getQuestions();
+  //       // const questionIds = questions.map((question) => {
+  //       //   return question.id;
+  //       // });
+  //       // await Option.update(
+  //       //   { count: 0 },
+  //       //   {
+  //       //     where: {
+  //       //       questionId: {
+  //       //         [Op.in]: questionIds,
+  //       //       },
+  //       //     },
+  //       //   }
+  //       // );
+  //       await Voter.update(
+  //         { voteStatus: false },
+  //         {
+  //           where: {
+  //             electionId: request.params.id,
+  //           },
+  //         }
+  //       );
+  //       const updatedElection = await election.startAnElection();
+  
+  //       response.json(updatedElection);
+  //     } catch (error) {
+  //       console.log(error);
+  //       response.status(420);
+  //     }
+  //   }
+  // );
+
   app.delete(
     "/elections/:id",
+    connectEnsureLogin.ensureLoggedIn(),
     
     async function (request, response) {
       console.log("We have to delete a Todo with ID: ", request.params.id);

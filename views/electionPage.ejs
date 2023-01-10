@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="/css/index.css">
+    
     <title><%=title%></title>
     <script>
         var token = document
@@ -27,54 +28,57 @@
                 })
                 .catch((err) => console.log(err));
         }
-        // function deleteElection(id){
-        //     fetch(`/elections/${id}`, {
-        //         method: "delete",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify({
-        //             "_csrf": token
+        // function startElection(id) {
+        //     console.log("running...");
+        //         fetch(`/elections/${id}/start`, {
+        //             method: "put",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify({
+        //                 "_csrf": token
+        //             })
         //         })
-        //     })
-        //         .then((res) => {
-        //             if (res.ok) {
-        //                 window.location.replace("/elections");
-        //             }
-        //         })
-        //         .catch((err) => console.log(err));
-        // }
+        //             .then((res) => {
+        //                 if (res.ok) {
+        //                     window.location.replace(`/elections/${id}`);
+        //                 }
+        //             })
+        //             .catch((err) => console.log(err));
+        //         }
     </script>
 </head>
 <body>
-    <div>
-        <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=electionName%></a>
-      </div>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
     <%- include('header.ejs') %>
-    <a href="/signout"><button>SignOut</button></a>
+    <a href="/signout">Signout</a>
+    
 
     <h3><a href="/elections/<%=id%>"><%=electionName%></a></h3>
-    
+    <br><br><br><br><br>
     <% if (! electionStatus){%>
-        <a href="/elections/<%=id%>/questions"><button>Manage your questions</button></a>
+        <a href="/elections/<%=id%>/questions" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" ><button>Manage your questions</button></a>
     <%}else{%>
         <p>election running at:</p>
-        <a id="vote" href="/elections/<%=id%>/vote" class="special">/elections/<%=id%>/vote</a>
+        <a id="vote" href="/elections/<%=id%>/vote" class="border border-gray-300 text-gray-900 rounded p-2 w-full">/elections/<%=id%>/vote</a>
         <%}%>
-    
-    <a href="/elections/<%=id%>/voters"><button>Manage voters</button></a>
+    <br><br><br><br><br>
+    <a href="/elections/<%=id%>/voters" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"><button>Manage voters</button></a>
+    <br><br><br><br><br>
     <div>
         <%if(!electionStatus){%>
-            <a href="/elections/<%=id%>/electionPreview"><button>Preview Election</button></a>
+            <a href="/elections/<%=id%>/electionPreview" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"><button>Start Election</button></a>
             
             <%}else{%>
-                <button onclick="endElection(<%=id%>)">End Election</button>
+                <button onclick="endElection(<%=id%>)" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2">End Election</button>
         <%}%>
 
 
         <%if(electionStatus){%>
-            <a href="/elections/<%=id%>/results"><button>Results</button></a>
+            <a href="/elections/<%=id%>/results" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"><button>Results</button></a>
         <%}%>
     </div>
-
+</div>
+</div>
     <script>
         const vote=document.getElementById("vote")
         vote.innerText=window.location.origin+vote.innerText

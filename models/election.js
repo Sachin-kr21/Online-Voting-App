@@ -11,16 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-    }
-    static addElection({title}) {
-      return this.create({
-        name: title
-        
+      Election.belongsTo(models.Admin, {
+        foreignKey: "adminId",
       });
     }
-    static async createElection({ name }) {
+    // static addElection({title,adminId}) {
+    //   return this.create({
+    //     name: title,
+    //     adminId : adminId
+    //   });
+    // }
+    static async createElection({ name , adminId}) {
       try {
-        return await this.create({ name: name, electionStatus: false });
+        return await this.create({ name: name, electionStatus: false ,adminId : adminId});
       } catch (error) {
         console.log(error);
       }
@@ -33,11 +36,21 @@ module.exports = (sequelize, DataTypes) => {
     // }
     static deleteElection(id) {
       this.destroy({
-        where:{id}
+        where:{id,
+        
+        }
       });
     }
-    static getElections() {
-      return this.findAll();
+    static getElections(adminId) {
+      // console.log("8888888888888888",adminId)
+      return this.findAll(
+        {where:{
+          adminId
+        }}
+      );
+    }
+    async startAnElection() {
+      return await this.update({ onGoingStatus: true });
     }
   }
   Election.init({
