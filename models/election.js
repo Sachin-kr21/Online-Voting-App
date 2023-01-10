@@ -4,23 +4,18 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Election extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
-      // define association here
+
       Election.belongsTo(models.Admin, {
         foreignKey: "adminId",
       });
+
+      Election.hasMany(models.Question, {
+        foreignKey: "electionId",
+      });
     }
-    // static addElection({title,adminId}) {
-    //   return this.create({
-    //     name: title,
-    //     adminId : adminId
-    //   });
-    // }
+
     static async createElection({ name , adminId}) {
       try {
         return await this.create({ name: name, electionStatus: false ,adminId : adminId});
@@ -29,11 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
 
-    // static addE({ name1 }) {
-    //   return this.create({
-    //     name : name1
-    //   });
-    // }
     static deleteElection(id) {
       this.destroy({
         where:{id,
@@ -41,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
     }
+
     static getElections(adminId) {
       // console.log("8888888888888888",adminId)
       return this.findAll(
@@ -49,12 +40,14 @@ module.exports = (sequelize, DataTypes) => {
         }}
       );
     }
-    async startAnElection() {
+    async startElection() {
       return await this.update({ onGoingStatus: true });
     }
   }
   Election.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    electionStatus: DataTypes.BOOLEAN,
+    
   }, {
     sequelize,
     modelName: 'Election',

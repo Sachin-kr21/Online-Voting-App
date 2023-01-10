@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Voter login
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script>
+        function deleteQuestion(id,qid){
+        fetch(`/elections/${id}/questions/${qid}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                // body: JSON.stringify({
+                //     "_csrf": token
+                // })
+            })
+                .then((res) => {
+                    console.log(res)
+                    window.location.reload();
+          })
+                .catch((err) => console.log(err));
+      }
+    </script>
+</head>
+<body>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
+            <%- include('header.ejs') %>
+            <form action="/elections/<%=id%>/questions " method="post">
+                <div class="py-3">
+                    <label for="text-gray-900">Question name:</label>
+                    <input type="text" name="name" class="border border-gray-300 text-gray-900 rounded p-2 w-full">
+                </div>
+                <div class="py-3">
+                    <label for="text">Description:</label>
+                    <textarea type="text" name="desc" class="border border-gray-300 text-gray-900 rounded p-2 w-full"></textarea>
+                </div>
+                <div class="py-3">
+                    <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" type="submit">Add</button>
+                </div>
+            </form>
+            <div>
+                <%= console.log("11111111111111111111111111",allQuestions) %> 
+                <%- include("question.ejs",{data:allQuestions,id}) %> 
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

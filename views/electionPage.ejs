@@ -13,21 +13,21 @@
             .querySelector('meta[name="csrf-token"]')
             .getAttribute("content")
         
-        function endElection(id){
-            fetch(`/elections/${id}/end`, {
-                method: "put",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    "_csrf": token
-                })
-            })
-                .then((res) => {
-                    if (res.ok) {
-                        window.location.replace(`/elections/${id}/results`);
-                    }
-                })
-                .catch((err) => console.log(err));
-        }
+        // function endElection(id){
+        //     fetch(`/elections/${id}/end`, {
+        //         method: "put",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({
+        //             "_csrf": token
+        //         })
+        //     })
+        //         .then((res) => {
+        //             if (res.ok) {
+        //                 window.location.replace(`/elections/${id}/results`);
+        //             }
+        //         })
+        //         .catch((err) => console.log(err));
+        // }
         // function startElection(id) {
         //     console.log("running...");
         //         fetch(`/elections/${id}/start`, {
