@@ -1,1 +1,85 @@
-<h1>Manage question</h1>
+<!-- <h1>Manage question</h1> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Manage question
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script>
+        function editQuestion(id,qid){
+        console.log("editing question...");
+        questionName=document.getElementById("questionName").innerText
+        questionDesc=document.getElementById("questionDesc").innerText
+        if (questionName===""){
+          window.alert("Question name cannot be empty")
+          window.location.reload()
+        }else{
+          console.log(questionName);
+        }}
+      
+        function editques(id,qid){
+            let b=document.getElementById("editbtn")        
+            if (b.innerText==="edit question!" ){
+                let q=document.getElementById("quName")
+                let d=document.getElementById("deName")
+                q.contentEditable=true
+                d.contentEditable=true
+                b.innerText="Save Changes";
+            }
+            else{
+                let q=document.getElementById("quName").innerHTML
+                let d=document.getElementById("deName").innerHTML
+                q.trimEnd("")
+                d.trimEnd("")
+                fetch(`/elections/${id}/questions/${qid}`, {
+                    method: "put",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name:q,
+                        description:d,
+                        // "_csrf": token
+                    })
+                })
+                .then(
+                    (res) => {
+                        if (res.ok) {
+                            window.location.reload();
+                        }
+                    }
+                )
+                .catch((err) => console.log(err));
+            }
+        }
+
+               
+            
+    </script>
+
+</head>
+<body>
+    <div class="grid grid-cols-6" >
+        <div class="col-start-3 col-span-2" id="container1">
+            <%- include('header.ejs') %>
+                
+                <div class="py-3">
+                    <h1 id="quName"><%= question.name %> </h1>
+                </div>
+                <div class="py-3">
+                    <h2 id="deName"><%= question.desc %> </h2>
+                </div>
+                <div class="py-3">
+                <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"  id="editbtn"
+                onclick="editques(<%=election.id%> ,  <%=question.id%>)">
+                    edit question!
+                </button>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

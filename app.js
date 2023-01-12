@@ -162,16 +162,21 @@ app.get("/login", async (request, response) => {
     )
   }
   )
-
+  
   app.get(
     "/elections/:id/questions/:qid",
     connectEnsureLogin.ensureLoggedIn(),
     async (request, response) => {
       try {
         const question = await Question.findByPk(request.params.qid);
+        const election = await question.getElection();
+        // let editable=false;
         response.render("manageQuestion", {
           title: "Manage Question",
           question: question,
+          election,
+          // editable,
+          
         });
       } catch (error) {
         console.log(error);
@@ -246,6 +251,7 @@ app.get("/login", async (request, response) => {
     }
   );
 
+
   app.post(
     "/elections/:id/voters",
     connectEnsureLogin.ensureLoggedIn(),
@@ -264,6 +270,20 @@ app.get("/login", async (request, response) => {
       }
     }
   );
+
+  app.put("/elections/:id/questions/:qid",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    const updatedQuestion=Question.updateQuestion({
+      name:request.body.name,
+      desc:request.body.description,
+      questionId:request.params.qid
+    })
+    return response.json(updatedQuestion)
+  }
+  )
+
+  
 
   app.delete(
     "/elections/:id",

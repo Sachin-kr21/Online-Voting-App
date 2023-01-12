@@ -46,6 +46,18 @@ module.exports = (sequelize, DataTypes) => {
         console.log(error);
       }
     }
+  static async updateQuestion({name,desc,questionId}){
+    try{
+      return await this.update({
+        name: name,
+        desc: desc,
+      },{where:{
+        id:questionId
+      }})
+    }catch(error){
+      console.log(error);
+    }
+  }
   }
   Question.init({
     name: {
