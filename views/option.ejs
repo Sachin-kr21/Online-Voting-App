@@ -1,0 +1,14 @@
+<h5 class=" font-black"> 
+    <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;" id=""><%= data.length %> </span></h5>
+                    <ul class="list-none ">
+                            <% for(let i=0; i<data.length;i++){ %> 
+                            <li class="-item">
+                                <div class="flex items-center w-fix my-2 px-2 py-1 rounded hover:bg-gray-100">
+                                <input id="<%= data[i].id %>" type="checkbox" class="w-4 h-4 text-blue-600 bg-gay-100 rounded border ">
+                                <label for="<%= data[i].id %>" class="ml-2 text-sm text-gray-600 cursor-pointer font-medium ">
+                                    <%= data[i].name %> 
+                                </label>
+                                </div>
+                            </li>
+                            <% } %> 
+                    </ul>

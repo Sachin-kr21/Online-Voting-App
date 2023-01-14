@@ -9,6 +9,7 @@ const connectEnsureLogin = require("connect-ensure-login");
 const passport = require("passport");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
+const { ConnectionRefusedError } = require("sequelize");
 
 app.use(bodyParser.json());
 
@@ -170,11 +171,13 @@ app.get("/login", async (request, response) => {
       try {
         const question = await Question.findByPk(request.params.qid);
         const election = await question.getElection();
+        const allOptions = await Option.getOptions(request.params.qid)
         // let editable=false;
         response.render("manageQuestion", {
           title: "Manage Question",
           question: question,
           election,
+          allOptions,
           // editable,
           
         });
@@ -194,7 +197,9 @@ app.get("/login", async (request, response) => {
         response.redirect("/elections");
       }
   );
-  app.post("/users", async (request, response) => {
+  app.post(
+    "/users",
+     async (request, response) => {
     try {
       const user = await Admin.create({
         firstName: request.body.firstName,
@@ -251,6 +256,25 @@ app.get("/login", async (request, response) => {
     }
   );
 
+  app.post(
+    `/elections/:id/questions/:qid`,
+    connectEnsureLogin.ensureLoggedIn(),
+    async function (request, response) {
+      try {
+        // console.log("1111111",request.params.id)
+        await Option.createOption({
+          name: request.body.name,
+          questionId: request.params.qid,
+        });
+        // console.log("111111",request.body.name,"2222222",request.body.desc,"33333333333",request.params.id)
+        // console.log("3333333")
+        return response.redirect(`/elections/${request.params.id}/questions/${request.params.qid}`);
+      } catch (error) {
+        console.log(error)
+        return response.redirect("/");
+      }
+    }
+  );
 
   app.post(
     "/elections/:id/voters",
@@ -271,7 +295,8 @@ app.get("/login", async (request, response) => {
     }
   );
 
-  app.put("/elections/:id/questions/:qid",
+  app.put(
+    "/elections/:id/questions/:qid",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     const updatedQuestion=Question.updateQuestion({

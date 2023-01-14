@@ -12,9 +12,37 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+    static async createOption({name , questionId}) {
+      try {
+        // console.log("2222222222")
+        return await this.create({
+          name: name,
+          questionId: questionId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    static async getOptions(id) {
+      try {
+        const allOptions = await Option.findAll({
+          where: {
+            questionId:id,
+          },
+        });
+        return allOptions;
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
   Option.init({
-    name: DataTypes.STRING
+    name: {
+      type:DataTypes.STRING,
+      allowNull: false,
+    },
+    questionId : DataTypes.INTEGER
+
   }, {
     sequelize,
     modelName: 'Option',

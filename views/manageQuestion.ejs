@@ -78,7 +78,19 @@
                     edit question!
                 </button>
             </div>
-
+            
+            <form action="/elections/<%=election.id%>/questions/<%= question.id %> " method="post">
+                <div class="py-3">
+                    <label for="text-gray-900">Option :</label>
+                    <input type="text" name="name" id="questionName" class="border border-gray-300 text-gray-900 rounded p-2 w-full">
+                </div>
+                <div class="py-3">
+                    <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" type="submit">Add Option</button>
+                </div>
+            </form>
+            <div>
+                <%- include("option.ejs",{data:allOptions}) %> 
+            </div>
         </div>
     </div>
 </body>
