@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Manage question
+        <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
@@ -55,7 +55,20 @@
                 .catch((err) => console.log(err));
             }
         }
-
+        function deleteOption(id,qid,oid){
+        fetch(`/elections/${id}/questions/${qid}/${oid}`, {
+                method: "delete",
+                headers: { "Content-Type": "application/json" },
+                // body: JSON.stringify({
+                //     "_csrf": token
+                // })
+            })
+                .then((res) => {
+                    // console.log(res)
+                    window.location.reload();
+          })
+                .catch((err) => console.log(err));
+      }
                
             
     </script>

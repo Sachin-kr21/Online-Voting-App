@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Option.belongsTo(models.Question, {
+        foreignKey: "questionId",
+      });
     }
     static async createOption({name , questionId}) {
       try {
@@ -34,6 +37,14 @@ module.exports = (sequelize, DataTypes) => {
       } catch (error) {
         console.log(error);
       }
+    }
+    static async deleteOption(id) {
+      return await this.destroy({
+        where: {
+          id,
+        },
+        cascade: true,
+      });
     }
   }
   Option.init({

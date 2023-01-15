@@ -159,6 +159,7 @@ app.get("/login", async (request, response) => {
     // console.log("4444444444444444444444444",allQuestions)
     response.render("questions",
     {id : request.params.id,
+      title: "Question",
     allQuestions}
     )
   }
@@ -186,6 +187,36 @@ app.get("/login", async (request, response) => {
       }
     }
   );
+
+  app.get(
+    "/elections/:id/electionPreview",
+    connectEnsureLogin.ensureLoggedIn(),
+    async (request, response) => {
+      let allOptions = {};
+      let options;
+      const election = await Election.findByPk(request.params.id);
+      const allQuestions = await Question.allQuestions(request.params.id);
+      let allQuesHaveAtleast2 = true;
+      let atleastOneques2 = false;
+      for (let i = 0; i < allQuestions.length; i++) {
+        options = await allQuestions[i].getOptions();
+        // options = await Option.getOptions(allQuestions[i]);
+        if (options.length < 2) {
+          allQuesHaveAtleast2 = false;
+        } else {
+          atleastOneques2 = true;
+        }
+        allOptions[allQuestions[i].id] = options;
+      }
+      response.render("electionPreview", {
+        title: "Preview",
+        election,
+        allQuestions,
+        allOptions,
+        allQuesHaveAtleast2,
+        atleastOneques2,
+      });
+  });
 
   app.post(
     "/session",
@@ -329,9 +360,22 @@ app.get("/login", async (request, response) => {
     connectEnsureLogin.ensureLoggedIn(),
     async (request, response) => {
       try {
-        const election = await Election.findByPk(request.params.id);
           const value = await Question.deleteQuestion(request.params.qid);
           response.status(200).json(value > 0 ? true : false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  );
+
+  app.delete(
+    "/elections/:id/questions/:qid/:oid",
+    connectEnsureLogin.ensureLoggedIn(),
+
+    async (request, response) => {
+      try {
+        await Option.deleteOption(request.params.oid);
+        return response.json({ success: true });
       } catch (error) {
         console.log(error);
       }
