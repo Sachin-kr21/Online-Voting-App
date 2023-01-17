@@ -9,41 +9,19 @@
     
     <title><%=title%></title>
     <script>
-        var token = document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute("content")
-        
-        // function endElection(id){
-        //     fetch(`/elections/${id}/end`, {
-        //         method: "put",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify({
-        //             "_csrf": token
-        //         })
-        //     })
-        //         .then((res) => {
-        //             if (res.ok) {
-        //                 window.location.replace(`/elections/${id}/results`);
-        //             }
-        //         })
-        //         .catch((err) => console.log(err));
-        // }
-        // function startElection(id) {
-        //     console.log("running...");
-        //         fetch(`/elections/${id}/start`, {
-        //             method: "put",
-        //             headers: { "Content-Type": "application/json" },
-        //             body: JSON.stringify({
-        //                 "_csrf": token
-        //             })
-        //         })
-        //             .then((res) => {
-        //                 if (res.ok) {
-        //                     window.location.replace(`/elections/${id}`);
-        //                 }
-        //             })
-        //             .catch((err) => console.log(err));
-        //         }
+        function endElection(id){
+            // console.log("1111")
+            fetch(`/elections/${id}/end`, {
+                    method: "put",
+                    headers: { "Content-Type": "application/json" }
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            window.location.replace(`/elections/${id}`);
+                        }
+                    })
+                    .catch((err) => console.log(err));
+        }
     </script>
 </head>
 <body>
@@ -58,8 +36,8 @@
     <% if (! electionStatus){%>
         <a href="/elections/<%=id%>/questions" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" ><button>Manage your questions</button></a>
     <%}else{%>
-        <p>election running at:</p>
-        <a id="vote" href="/elections/<%=id%>/vote" class="border border-gray-300 text-gray-900 rounded p-2 w-full">/elections/<%=id%>/vote</a>
+        <p>election running at:</p><br><br>
+        <a id="electionPage" href="/elections/<%=id%>/electionPage" class="border border-gray-300 text-gray-900 rounded p-2 w-full">/elections/<%=id%>/electionPage</a>
         <%}%>
     <br><br><br><br><br>
     <a href="/elections/<%=id%>/voters" class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"><button>Manage voters</button></a>

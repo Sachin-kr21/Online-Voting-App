@@ -15,9 +15,6 @@
             fetch(`/elections/${election.id}/voters/${id}`,{
                 method: "delete",
                 headers: {"Content-Type": "application/json"},
-                // body : JSON.stringify({
-                //     "_csrf":token
-                // })
             })
             .then((res)=>{
                 if (res.ok){
@@ -32,9 +29,7 @@
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
-            
             <%- include('header.ejs') %>
-
             <form action="/elections/<%=id %>/voters " method="post">
                 
                 <div class="py-3">
@@ -51,7 +46,6 @@
             </form>
             <div>
                 <%- include("Voter.ejs",{data:allVoters}) %> 
-
             </div>
         </div>
     </div>

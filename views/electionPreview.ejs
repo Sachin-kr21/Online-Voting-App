@@ -9,11 +9,29 @@
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
+    <script>
+        function launchElection(id) {
+                // console.log("1111")
+                fetch(`/elections/${id}/launch`, {
+                    method: "put",
+                    headers: { "Content-Type": "application/json" }
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            window.location.replace(`/elections/${id}`);
+                        }
+                    })
+                    .catch((err) => console.log(err));
+            
+        }
+    
+    </script>
 </head>
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
+            <a href="/signout">Signout</a>
             <h2>
                 <%=election.name%>
             </h2>
@@ -40,8 +58,10 @@
                 <br>
                 <% questionCount++; }%>
                 <div class="py-3">
-                    <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" type="submit">Launch Election</button>
+                    <button onclick="console.log('111');launchElection(<%=election.id%>)"
+                        class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2">launch Election</button>
                 </div>
+
         </div>
     </div>
 </body>

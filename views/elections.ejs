@@ -15,9 +15,6 @@
             fetch(`/elections/${id}`,{
                 method: "delete",
                 headers: {"Content-Type": "application/json"},
-                // body : JSON.stringify({
-                //     "_csrf":token
-                // })
             })
             .then((res)=>{
                 if (res.ok){

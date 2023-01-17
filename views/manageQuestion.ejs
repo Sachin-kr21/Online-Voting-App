@@ -42,7 +42,6 @@
                     body: JSON.stringify({
                         name:q,
                         description:d,
-                        // "_csrf": token
                     })
                 })
                 .then(
@@ -56,20 +55,37 @@
             }
         }
         function deleteOption(id,qid,oid){
-        fetch(`/elections/${id}/questions/${qid}/${oid}`, {
+                
+            fetch(`/elections/${id}/questions/${qid}/${oid}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
-                // body: JSON.stringify({
-                //     "_csrf": token
-                // })
             })
                 .then((res) => {
                     // console.log(res)
                     window.location.reload();
           })
                 .catch((err) => console.log(err));
-      }
-               
+        }
+        function editOption(id,qid,oid){
+            optionName=document.getElementById(`${oid}`).innerText
+          console.log(optionName);
+          fetch(`/elections/${id}/questions/${qid}/options/${oid}`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name:optionName,
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    // console.log("33333")
+                    if (res.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+      
             
     </script>
 

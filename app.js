@@ -113,7 +113,7 @@ app.get("/login", async (request, response) => {
       }
     }
   );
-
+  
   app.get(
     "/elections/:id",
     connectEnsureLogin.ensureLoggedIn(),
@@ -140,7 +140,7 @@ app.get("/login", async (request, response) => {
     async (request, response) => {
       const allVoters = await Voter.getVoters(request.params.id);
       const election = await Election.findByPk(request.params.id);
-      console.log("1111111111111",allVoters)
+      // console.log("1111111111111",allVoters)
       response.render("voters", {
         title: "Ballot",
         election,
@@ -187,7 +187,7 @@ app.get("/login", async (request, response) => {
       }
     }
   );
-
+  
   app.get(
     "/elections/:id/electionPreview",
     connectEnsureLogin.ensureLoggedIn(),
@@ -201,11 +201,6 @@ app.get("/login", async (request, response) => {
       for (let i = 0; i < allQuestions.length; i++) {
         options = await allQuestions[i].getOptions();
         // options = await Option.getOptions(allQuestions[i]);
-        if (options.length < 2) {
-          allQuesHaveAtleast2 = false;
-        } else {
-          atleastOneques2 = true;
-        }
         allOptions[allQuestions[i].id] = options;
       }
       response.render("electionPreview", {
@@ -213,8 +208,6 @@ app.get("/login", async (request, response) => {
         election,
         allQuestions,
         allOptions,
-        allQuesHaveAtleast2,
-        atleastOneques2,
       });
   });
 
@@ -339,6 +332,52 @@ app.get("/login", async (request, response) => {
   }
   )
 
+  app.put(
+    "/elections/:id/questions/:qid/:oid",
+    async (request, response) => {
+      try {
+        // console.log("222")
+        const updatedOption = await Option.updateOption(
+          updatedName=request.body.name,
+          id=request.params.oid
+        );
+        response.json(updatedOption);
+      } catch (error) {
+        console.log(error);
+        response.json(error);
+      }
+    }
+  );
+
+  app.put(
+    "/elections/:id/launch",
+    connectEnsureLogin.ensureLoggedIn(),
+    async (request, response) => {
+      try {
+        // console.log("222")
+        const startElection = await Election.startElection(request.params.id);
+        response.json(startElection);
+      } catch (error) {
+        console.log(error);
+        response.json(error);
+      }
+    }
+  );
+
+  app.put(
+    "/elections/:id/end",
+    connectEnsureLogin.ensureLoggedIn(),
+    async (request, response) => {
+      try {
+        // console.log("222")
+        const startElection = await Election.endElection(request.params.id);
+        response.json(startElection);
+      } catch (error) {
+        console.log(error);
+        response.json(error);
+      }
+    }
+  );
   
 
   app.delete(

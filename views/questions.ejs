@@ -14,12 +14,8 @@
         fetch(`/elections/${id}/questions/${qid}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
-                // body: JSON.stringify({
-                //     "_csrf": token
-                // })
             })
                 .then((res) => {
-                    // console.log(res)
                     window.location.reload();
           })
                 .catch((err) => console.log(err));

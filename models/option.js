@@ -26,6 +26,17 @@ module.exports = (sequelize, DataTypes) => {
         console.log(error);
       }
     }
+    static async updateOption({updatedName,id}){
+      try{
+        return await this.update({
+          name: updatedName,
+        },{where:{
+          id:id
+        }})
+      }catch(error){
+        console.log(error);
+      }
+    }
     static async getOptions(id) {
       try {
         const allOptions = await Option.findAll({
@@ -38,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         console.log(error);
       }
     }
+
     static async deleteOption(id) {
       return await this.destroy({
         where: {
