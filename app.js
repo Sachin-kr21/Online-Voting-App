@@ -364,6 +364,7 @@ app.get("/login", async (request, response) => {
     }
   );
 
+  
   app.put(
     "/elections/:id/end",
     connectEnsureLogin.ensureLoggedIn(),

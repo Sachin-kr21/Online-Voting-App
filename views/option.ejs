@@ -6,6 +6,7 @@
                                 <div class="flex items-center w-fix my-2 px-2 py-1 rounded hover:bg-gray-100">
                                 <u name="sachin" id="<%=data[i].id%>" ondblclick="opt=document.getElementById('<%=data[i].id%>');opt.contentEditable=true;opt.focus();document.getElementById('btn<%=data[i].id%>').style.display=`initial`"><%= data[i].name %></u>
                                 <div class="icons">
+                                    
                                 <button class="save-icon" style="display: none;" id="btn<%=data[i].id%>" onclick="editOption(<%=election.id%>,<%=question.id%>,<%=data[i].id%>)">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
