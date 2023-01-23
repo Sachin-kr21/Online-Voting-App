@@ -63,6 +63,16 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+
+    static async resetVoterStatus(id){
+      return await Voter.update({
+        voteStatus:false,
+    },{
+      where:{
+        electionId:id
+      }
+    })
+    }
   }
 
   Voter.init({

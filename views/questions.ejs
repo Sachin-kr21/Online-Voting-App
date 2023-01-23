@@ -35,6 +35,11 @@
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
+            <a href="/signout">Signout</a>
+            <br>
+            <div class="nav">
+                <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/questions">questions</a>
+            </div>
             <form action="/elections/<%=id%>/questions " method="post">
                 <div class="py-3">
                     <label for="text-gray-900">Question name:</label>

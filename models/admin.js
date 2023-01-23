@@ -16,14 +16,50 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Admin.init({
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Admin',
-  });
+  Admin.init(
+    {
+      firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Proper first name required!",
+          },
+        },
+      },
+      lastName: DataTypes.STRING,
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+          args: true,
+          msg: "Email already exists",
+        },
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Proper email required!",
+          },
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: 1,
+            msg: "Proper email required!",
+          },
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Admin",
+    }
+  );
   return Admin;
 };

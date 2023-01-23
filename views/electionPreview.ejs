@@ -40,6 +40,10 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
             <a href="/signout">Signout</a>
+            <br>
+            <div class="nav">
+                <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/electionPreview">electionPreview</a>
+            </div>
             <h2>
                 <%=election.name%>
             </h2>

@@ -269,6 +269,7 @@ app.get(
   manageQuestions(),
   async (request, response) => {
     const loggedInAdmin = request.params.id;
+    const election = await Election.findByPk(request.params.id);
     // console.log("bbbbbbbbbbbbbbbb",loggedInAdmin)
     const allQuestions = await Question.allQuestions(loggedInAdmin);
     // console.log("4444444444444444444444444",allQuestions)
@@ -276,6 +277,7 @@ app.get(
       id: request.params.id,
       title: "Question",
       allQuestions,
+      election
     });
   }
 );
@@ -365,7 +367,10 @@ app.get(
   const election = await Election.findByPk(request.params.id);
   const vote = await Voter.voteCount(request.params.id)
   const voteCount = vote.length
-  if ( election.electionStatus || request.user.firstName ){
+  if ( !election.electionStatus || (request.user && request.user.firstName) ){
+    console.log(election.electionStatus,"1111")
+    // console.log(request.user.firstName,"2222")
+
   let allOptions = {};
   const allQuestions = await Question.allQuestions(request.params.id);
   for (let i = 0; i < allQuestions.length; i++) {
@@ -616,6 +621,7 @@ app.put(
     try {
       // console.log("222")
       const startElection = await Election.endElection(request.params.id);
+      const resetVoterStatus = await Voter.resetVoterStatus(request.params.id);
       response.json(startElection);
     } catch (error) {
       console.log(error);
