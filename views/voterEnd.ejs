@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title><%= title %> </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/styles.css">
     
@@ -13,12 +13,12 @@
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
-            <p class="py-2">Welcome</p>
-            <p class="py-2">New here?&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<a class="text-green-600 " href="/signup">Sign-up now</a></p>
-            <p class="py-2">Already have an account?&emsp;<a class="text-green-600" href="/signin">Sign-in</a></p> 
+            <h1 >THANK YOU !</h1>
+
+            <p>For election result click the below link</p><br><br>
+        <a id="electionPage" href="/elections/<%=election.id%>/results" class="border border-gray-300 text-gray-900 rounded p-2 w-full">/elections/<%=election.id%>/results</a>
         </div>
     </div>
-
 
 </body>
 </html>

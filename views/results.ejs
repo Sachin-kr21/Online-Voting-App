@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> 
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script>
+    </script>
+</head>
+<body>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
+            <%- include('header.ejs') %>
+            <a href="/signout">Signout</a>
+            <h2>
+                <%=election.name%>
+            </h2>
+            <br><br>
+            <b>Total votes : <%= voteCount %> </b>
+            <form >
+            <% var questionCount=1 %>
+            <% for(let i=0;i<allQuestions.length;i++){  %>
+                
+                    Question <%= questionCount %> 
+                    <h1 class="quesName" ><b><big><%=allQuestions[i].name%></big></b></h1>
+                    <div class="quesDesc"> 
+                        <%=allQuestions[i].desc%>
+                    </div>
+                    
+                    <ul class="options">
+                        <%for(j in allOptions[allQuestions[i].id]){%>
+                        <li>
+                            
+                            <%=allOptions[allQuestions[i].id][j].name%>
+                            Total votes : <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;"><%=allOptions[allQuestions[i].id][j].optionCount%></span>
+                            <br>
+                            <br>
+                        </li>
+                        
+                    </ul>
+                    <% } %> 
+                    <br
+                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                <br>
+                <% questionCount++; }%>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

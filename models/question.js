@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
     static async allQuestions(id) {
+      // count=0
       try {
         const allQuestions = await Question.findAll({
           where: {

@@ -41,8 +41,28 @@ module.exports = (sequelize, DataTypes) => {
         
       }
     }
+     
+    static async changeVoteStatus(id){
+      try {
+        await this.update({
+          voteStatus : true
+        },{
+          where:{id}
+        });
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
 
-
+    static async voteCount(id){
+      return await Voter.findAll({
+        where: {
+          electionId: id,
+          voteStatus: true
+        },
+      });
+    }
   }
 
   Voter.init({

@@ -10,15 +10,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
-        function deleteQuestion(id,qid){
+        function deleteQuestion(id,qid,QuestionsCount){
         fetch(`/elections/${id}/questions/${qid}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                        count:QuestionsCount
+                    })
             })
                 .then((res) => {
+                    console.log(res)
+                    if (res.status===400){window.alert("Atleast 1 question should be in the ballot")}
+                    // if( res.status===400){window.alert("Atleast 1 question should be in the ballot")}
                     window.location.reload();
           })
-                .catch((err) => console.log(err));
+                .catch(
+                    (err) => console.log(err)
+                    // window.alert("Atleast 1 question should be in the ballot")
+                    );
       }
     </script>
 </head>
@@ -40,7 +49,7 @@
                 </div>
             </form>
             <div>
-                <%- include("question.ejs",{data:allQuestions,id}) %> 
+                <%- include("question.ejs",{data:allQuestions,id,title:"Questions"}) %> 
             </div>
         </div>
     </div>

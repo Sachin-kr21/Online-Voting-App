@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         return await this.create({
           name: name,
           questionId: questionId,
+          optionCount: 0
         });
       } catch (error) {
         console.log(error);
@@ -43,6 +44,8 @@ module.exports = (sequelize, DataTypes) => {
           where: {
             questionId:id,
           },
+          order:[["id","ASC"
+          ]]
         });
         return allOptions;
       } catch (error) {
@@ -64,7 +67,8 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       allowNull: false,
     },
-    questionId : DataTypes.INTEGER
+    questionId : DataTypes.INTEGER,
+    optionCount: DataTypes.INTEGER
 
   }, {
     sequelize,

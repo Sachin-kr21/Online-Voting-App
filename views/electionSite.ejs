@@ -10,29 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
-        function launchElection(id,questionCount,optCount) {
-                console.log(optCount,"Option count")
-                console.log(questionCount,"Question count")
-                if (questionCount>=1 && optCount ){
-                    fetch(`/elections/${id}/launch`, {
-                    method: "put",
-                    headers: { "Content-Type": "application/json" }
-                })
-                    .then((res) => {
-                        if (res.ok) {
-                            window.location.replace(`/elections/${id}`);
-                        }
-                    })
-                    .catch((err) => console.log(err));}
-                else if(questionCount<1){
-                    window.alert("Atleast 1 question required")
-                }
-                else {
-                    window.alert("Atleast 2 options in every question")
-                }
-            
-        }
-        
     </script>
 </head>
 <body>
@@ -44,6 +21,7 @@
                 <%=election.name%>
             </h2>
             <br><br>
+            <form action="/elections/<%= election.id %>/electionpage" method="post">
             <% var questionCount=1 %>
             <% for(let i=0;i<allQuestions.length;i++){  %>
                 
@@ -57,7 +35,7 @@
                         <%for(j in allOptions[allQuestions[i].id]){%>
                         <li>
                             &emsp;
-                            <%= optionCount %>. <%=allOptions[allQuestions[i].id][j].name%>
+                            <input type="radio" value="<%= allOptions[allQuestions[i].id][j].id %>"  name="<%= allQuestions[i].id%>" required><%=allOptions[allQuestions[i].id][j].name%>
                         </li>
                         <%optionCount++}%>
                     </ul>
@@ -66,10 +44,10 @@
                 <br>
                 <% questionCount++; }%>
                 <div class="py-3">
-                    <button onclick="console.log('111');launchElection(<%=election.id%>,<%= quesCount %>,<%= optCount %>)"
-                        class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2">launch Election</button>
+                     
+                    <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2">Submit</button>
                 </div>
-
+            </form>
         </div>
     </div>
 </body>

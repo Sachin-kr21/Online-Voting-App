@@ -54,17 +54,24 @@
                 .catch((err) => console.log(err));
             }
         }
-        function deleteOption(id,qid,oid){
+        function deleteOption(id,qid,oid,count){
                 
             fetch(`/elections/${id}/questions/${qid}/${oid}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                        count:count
+                    })
             })
-                .then((res) => {
-                    // console.log(res)
+            .then((res) => {
+                    console.log(res)
+                    // if( res.status===400){window.alert("Atleast 1 question should be in the ballot")}
                     window.location.reload();
           })
-                .catch((err) => console.log(err));
+                .catch(
+                    (err) => console.log(err)
+                    // window.alert("Atleast 2 options required")
+                    );
         }
         function editOption(id,qid,oid){
             optionName=document.getElementById(`${oid}`).innerText
@@ -73,8 +80,7 @@
                 method: "put",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name:optionName,
-                    "_csrf": token
+                    name:optionName
                 })
             })
                 .then((res) => {
@@ -98,8 +104,8 @@
                 <div class="py-3">
                     <h1 id="quName"><%= question.name %> </h1>
                 </div>
-                <div class="py-3">
-                    <h2 id="deName"><%= question.desc %> </h2>
+                <div class="py-3 w-full">
+                    <h2 id="deName" ><%= question.desc %> </h2>
                 </div>
                 <div class="py-3">
                 <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2"  id="editbtn"
@@ -116,6 +122,7 @@
                 <div class="py-3">
                     <button class="text-white bg-green-600 hover:bg-green-800 font-medium rounded px-5 py-2" type="submit">Add Option</button>
                 </div>
+                
             </form>
             <div>
                 <%- include("option.ejs",{data:allOptions}) %> 

@@ -11,17 +11,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
-        function deleteVoter(id){
-            fetch(`/elections/${election.id}/voters/${id}`,{
+        function deleteVoter(id,vid){
+            fetch(`/elections/${id}/voters/${vid}`,{
                 method: "delete",
                 headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    })
             })
-            .then((res)=>{
-                if (res.ok){
+            .then((res) => {
+                    console.log(res)
+                    // if( res.status===400){window.alert("Atleast 1 question should be in the ballot")}
                     window.location.reload();
-                }
-            })
-            .catch((err)=> console.error(err));
+          })
+                .catch(
+                    (err) => console.log(err)
+                    
+                    );
         }
     </script>
 </head>
@@ -45,7 +50,7 @@
                 </div>
             </form>
             <div>
-                <%- include("Voter.ejs",{data:allVoters}) %> 
+                <%- include("Voter.ejs",{data:allVoters,election}) %> 
             </div>
         </div>
     </div>

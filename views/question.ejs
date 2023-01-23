@@ -1,4 +1,4 @@
-<h5 class=" font-black">Election 
+<h5 class=" font-black"><%= title %> 
     <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;" id=""><%= data.length %> </span></h5>
                     <ul class="list-none ">
                             <% for(let i=0; i<data.length;i++){ %> 
@@ -7,7 +7,7 @@
                                     <a href="/elections/<%=id%>/questions/<%= data[i].id %>">
                                         <%= data[i].name %> 
                                     </a>
-                                    <a href="#" class=" trash-icon ml-2" onclick="deleteQuestion(<%=id%>,<%= data[i].id%>)">
+                                    <a href="#" class=" trash-icon ml-2" onclick="deleteQuestion(<%=id%>,<%= data[i].id%>,<%= data.length %>)">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                             stroke="currentColor" class="w-4 h-4">
                                             <path stroke-linecap="round" stroke-linejoin="round"
