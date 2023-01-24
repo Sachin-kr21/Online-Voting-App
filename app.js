@@ -75,7 +75,7 @@ passport.use(
         .then(function (user) {
           const result = 1;
           if (result) {
-            console.log("999999deleteVoterdeleteVoter")
+            // console.log("999999deleteVoterdeleteVoter")
             return done(null, user);
           } else {
             return done(null, false, { message: "Invalid password" });
@@ -213,7 +213,7 @@ app.get("/signout", (request, response, next) => {
 app.get("/elections", 
 connectEnsureLogin.ensureLoggedIn(),
 async (request, response) => {
-  const loggedInAdmin = request.user.id;
+  try{const loggedInAdmin = request.user.id;
   const allElections = await Election.getElections(loggedInAdmin);
   // console.log("9999999999999",allElections)
   // console.log("11111111111111111",allElections)
@@ -224,7 +224,7 @@ async (request, response) => {
     });
   } else {
     response.json({ allElections });
-  }
+  }}catch(error){console.log(error)}
 });
 
 app.get(
@@ -251,7 +251,7 @@ app.get(
   "/elections/:id/voters",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const allVoters = await Voter.getVoters(request.params.id);
+    try{const allVoters = await Voter.getVoters(request.params.id);
     const election = await Election.findByPk(request.params.id);
     // console.log("1111111111111",allVoters)
     response.render("voters", {
@@ -260,7 +260,9 @@ app.get(
       allVoters,
       id: request.params.id,
     });
-  }
+  }catch(error){
+    console.log(error)
+  }}
 );
 
 app.get(
@@ -268,7 +270,7 @@ app.get(
   connectEnsureLogin.ensureLoggedIn(),
   manageQuestions(),
   async (request, response) => {
-    const loggedInAdmin = request.params.id;
+    try{const loggedInAdmin = request.params.id;
     const election = await Election.findByPk(request.params.id);
     // console.log("bbbbbbbbbbbbbbbb",loggedInAdmin)
     const allQuestions = await Question.allQuestions(loggedInAdmin);
@@ -278,7 +280,7 @@ app.get(
       title: "Question",
       allQuestions,
       election
-    });
+    });}catch(error){console.log(error)}
   }
 );
 
@@ -309,7 +311,7 @@ app.get(
   "/elections/:id/electionPreview",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    let allOptions = {};
+    try{let allOptions = {};
     let options;
     const election = await Election.findByPk(request.params.id);
     const allQuestions = await Question.allQuestions(request.params.id);
@@ -332,7 +334,7 @@ app.get(
       allOptions,
       quesCount,
       optCount
-    });
+    });}catch(error){console.log(error)}
   }
 );
 
@@ -342,7 +344,7 @@ electionRunning(),
 voterLoggedIn(),
 voterStatus(),
  async (request, response) => {
-  let allOptions = {};
+  try{let allOptions = {};
   const election = await Election.findByPk(request.params.id);
   const allQuestions = await Question.allQuestions(request.params.id);
   for (let i = 0; i < allQuestions.length; i++) {
@@ -357,14 +359,14 @@ voterStatus(),
     election,
     allQuestions,
     allOptions,
-  });}
+  });}}catch(error){console.log(error)}
 });
 
 app.get(
   `/elections/:id/results`,
   // connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-  const election = await Election.findByPk(request.params.id);
+  try{const election = await Election.findByPk(request.params.id);
   const vote = await Voter.voteCount(request.params.id)
   const voteCount = vote.length
   if ( !election.electionStatus || (request.user && request.user.firstName) ){
@@ -389,7 +391,7 @@ app.get(
     });}
   else{
     response.redirect(`/elections/${election.id}/onGoing`)
-  }
+  }}catch(error){console.log(error)}
   }
 );
 
@@ -426,8 +428,9 @@ app.post(
     failureRedirect: "/signin",
   }),
   (request, response) => {
-    console.log(request.user);
-    response.redirect("/elections");
+    try{console.log(request.user);
+    response.redirect("/elections");}
+    catch(error){console.log(error)}
   }
 );
 
@@ -437,8 +440,9 @@ app.post(
     failureRedirect: "back",
   }),
   (request, response) => {
-    console.log(request.user);
-    response.redirect(`/elections/${request.params.id}/electionpage`);
+    try{console.log(request.user);
+    response.redirect(`/elections/${request.params.id}/electionpage`);}
+    catch(error){console.log(error)}
   }
 );
 
@@ -458,7 +462,7 @@ app.post("/users", async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    response.redirect("/elections");
+    response.redirect("/signup");
   }
 });
 app.post(
@@ -537,7 +541,7 @@ app.post(
       return response.redirect(`/elections/${request.params.id}/voters`);
     } catch (error) {
       console.log(error);
-      return response.redirect("/");
+      // return response.redirect("/");
     }
   }
 );
@@ -553,7 +557,6 @@ async (request, response) => {
     request.body[i]
     const option = await Option.findByPk(request.body[i])
     option.increment("optionCount")
-
   }
   response.render("voterEnd", {
     title: "Voted",
@@ -570,12 +573,13 @@ app.put(
   connectEnsureLogin.ensureLoggedIn(),
   manageQuestions(),
   async function (request, response) {
-    const updatedQuestion = Question.updateQuestion({
+    try{const updatedQuestion = Question.updateQuestion({
       name: request.body.name,
       desc: request.body.description,
       questionId: request.params.qid,
     });
-    return response.json(updatedQuestion);
+    return response.json(updatedQuestion);}
+    catch(error){console.log(error)}
   }
 );
 
@@ -693,7 +697,7 @@ app.delete(
   "/elections/:id/voters/:vid",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
-    console.log(request.params.vid)
+    // console.log(request.params.vid)
     try {
       await Voter.deleteVoter(request.params.vid);
       return response.json({ success: true });
