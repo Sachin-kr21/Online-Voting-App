@@ -34,16 +34,16 @@
                     
                     <ul class="options">
                         <%for(j in allOptions[allQuestions[i].id]){%>
-                        <li>
+                        <li style="list-style:symbols();">
                             
                             <%=allOptions[allQuestions[i].id][j].name%>
-                            Total votes : <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;"><%=allOptions[allQuestions[i].id][j].optionCount%></span>
+                            <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;"><%=allOptions[allQuestions[i].id][j].optionCount%></span>
                             <br>
                             <br>
                         </li>
                         
+                        <% } %> 
                     </ul>
-                    <% } %> 
                     <br
                 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                 <br>
