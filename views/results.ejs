@@ -25,7 +25,7 @@
             <form >
             <% var questionCount=1 %>
             <% for(let i=0;i<allQuestions.length;i++){  %>
-                
+                    <hr>
                     Question <%= questionCount %> 
                     <h1 class="quesName" ><b><big><%=allQuestions[i].name%></big></b></h1>
                     <div class="quesDesc"> 
@@ -34,7 +34,7 @@
                     
                     <ul class="options">
                         <%for(j in allOptions[allQuestions[i].id]){%>
-                        <li style="list-style:symbols();">
+                        <li style="list-style:inside;">
                             
                             <%=allOptions[allQuestions[i].id][j].name%>
                             <span style="background-color: green; color: white; padding: 3px 6px;border-radius : 0 0 10px 10px ;margin: 0.5cm;"><%=allOptions[allQuestions[i].id][j].optionCount%></span>
