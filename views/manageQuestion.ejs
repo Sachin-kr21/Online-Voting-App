@@ -64,7 +64,8 @@
                     })
             })
             .then((res) => {
-                    console.log(res)
+                console.log(res)
+                    if (res.status===400){window.alert("Atleast 2 options required")}
                     // if( res.status===400){window.alert("Atleast 1 question should be in the ballot")}
                     window.location.reload();
           })

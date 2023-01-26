@@ -41,7 +41,11 @@
                 <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/voters">voters</a>
             </div>
             <form action="/elections/<%=id %>/voters " method="post">
-                
+                <% if(messages && messages.error && messages.error.length > 0)  { %>
+                    <% for(var i=0; i<messages.error.length; i++) { %>
+                            <li> <%= messages.error[i] %></li>
+                    <% } %>
+                  <% } %>
                 <div class="py-3">
                     <label for="text-gray-900">Voter ID:</label>
                     <input type="text" name="id" class="border border-gray-300 text-gray-900 rounded p-2 w-full">

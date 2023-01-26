@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Option extends Model {
     /**
@@ -38,6 +39,23 @@ module.exports = (sequelize, DataTypes) => {
         console.log(error);
       }
     }
+    static async resetOptionCount(allQuestions){
+      // console.log("2222")
+      try{
+        await Option.update(
+          { optionCount: 0 },
+          {
+            where: {
+              questionId: {
+                [Op.in]: allQuestions
+              },
+            },
+          }
+        );
+      }catch(error){
+        console.log(error);
+      }
+    }
     static async getOptions(id) {
       try {
         const allOptions = await Option.findAll({
@@ -64,8 +82,15 @@ module.exports = (sequelize, DataTypes) => {
   }
   Option.init({
     name: {
-      type:DataTypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: true,
+        len: {
+          args: 1,
+          msg: "Proper option required!",
+        },
+      },
     },
     questionId : DataTypes.INTEGER,
     optionCount: DataTypes.INTEGER

@@ -1,4 +1,5 @@
 'use strict';
+const bcrypt = require("bcrypt");
 const {
   Model
 } = require('sequelize');
@@ -49,9 +50,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          len: {
-            args: 1,
-            msg: "Proper email required!",
+          async checkpwd(pwd) {
+            if (await bcrypt.compare("", pwd)) {
+              throw new Error("Invalid password");
+            }
           },
         },
       },

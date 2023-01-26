@@ -9,11 +9,28 @@ const connectEnsureLogin = require("connect-ensure-login");
 const passport = require("passport");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
-const { ConnectionRefusedError } = require("sequelize");
-const { request } = require("http");
+const bcrypt = require("bcrypt")
+const flash = require("connect-flash");
+const saltRounds = 10;
+app.use(flash());
+
 
 
 app.use(bodyParser.json());
+
+app.use(
+  session({
+    secret: "my-super-secret-key-1111122222",
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -39,9 +56,9 @@ passport.use(
       passwordField: "password",
     },
     (username, password, done) => {
-      Admin.findOne({ where: { email: username, password: password } })
+      Admin.findOne({ where: { email: username} })
         .then(async function (user) {
-          const result = 1;
+          const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
           } else {
@@ -68,12 +85,11 @@ passport.use(
       Voter.findOne({
         where: {
           email: username,
-          password: password,
           electionId: request.params.id,
         },
       })
-        .then(function (user) {
-          const result = 1;
+        .then(async function (user) {
+          const result = await bcrypt.compare(password, user.password);
           if (result) {
             // console.log("999999deleteVoterdeleteVoter")
             return done(null, user);
@@ -174,31 +190,63 @@ function electionRunning(){
 
 function adminIsLoggedin()
 {
-  return (request,response,next)=>{
-    if (request.user && request.user.firstName){
-      next()
+  try{return (request,response,next)=>{
+    console.log(request.user.firstName,"wwwwwwwwwwwwwwwww")
+    if (request.user && (request.user.electionId)){
+      response.redirect("/")
     }
     else{
-      response.redirect(`/`)
+      next()
     }
+  }}
+  catch(error){
+    console.log(error,"rrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
   }
 }
 
 app.get("/", async (request, response) => {
-  // response.send("first")
-  response.render("index");
+  if (request.user != undefined) {
+    response.redirect("/elections");
+  } else {
+    // console.log(request.body.user);
+    response.render("index");
+  }
 });
 
 app.get("/login", async (request, response) => {
-  response.render("signin");
+  if (request.user != undefined) {
+    response.redirect("/elections");
+  } else {
+    // console.log(request.body.user);
+    response.render("signin", {
+      title: "Signin",
+      // csrfToken: request.csrfToken(),
+    });
+  }
 });
 
 app.get("/signup", async (request, response) => {
-  response.render("signup");
+  if (request.user != undefined) {
+    response.redirect("/elections");
+  } else {
+    // console.log(request.body.user);
+    response.render("signup", {
+      title: "Signup",
+      // csrfToken: request.csrfToken(),
+    });
+  }
 });
 
 app.get("/signin", async (request, response) => {
-  response.render("signin");
+  if (request.user != undefined) {
+    response.redirect("/elections");
+  } else {
+    // console.log(request.body.user);
+    response.render("signin", {
+      title: "Signin",
+      // csrfToken: request.csrfToken(),
+    });
+  }
 });
 
 app.get("/signout", (request, response, next) => {
@@ -212,6 +260,7 @@ app.get("/signout", (request, response, next) => {
 
 app.get("/elections", 
 connectEnsureLogin.ensureLoggedIn(),
+adminIsLoggedin(),
 async (request, response) => {
   try{const loggedInAdmin = request.user.id;
   const allElections = await Election.getElections(loggedInAdmin);
@@ -426,11 +475,13 @@ app.post(
   "/session",
   passport.authenticate("Admin", {
     failureRedirect: "/signin",
+    failureFlash: true,
   }),
   (request, response) => {
-    try{console.log(request.user);
+    try{
+    // console.log(request.user,"11111");
     response.redirect("/elections");}
-    catch(error){console.log(error)}
+    catch(error){console.log(error,"22222")}
   }
 );
 
@@ -447,21 +498,24 @@ app.post(
 );
 
 app.post("/users", async (request, response) => {
+  const hashedPwd = await bcrypt.hash(request.body.password , saltRounds)
+  console.log(hashedPwd)
   try {
     const user = await Admin.create({
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
-      password: request.body.password,
+      password: hashedPwd,
     });
     request.login(user, (err) => {
-      if (err) {
-        console.log(err);
-      }
+      console.log(err);
       response.redirect("/elections");
     });
   } catch (error) {
     console.log(error);
+    for (let i = 0; i < error.errors.length; i++) {
+      request.flash("error", error.errors[i].message);
+    }
     response.redirect("/signup");
   }
 });
@@ -531,17 +585,23 @@ app.post(
   "/elections/:id/voters",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
+  const hashedPwd = await bcrypt.hash(request.body.password , saltRounds)
+
     try {
       await Voter.createVoter({
         id: request.body.id,
-        password: request.body.password,
+        password: hashedPwd,
         electionId: request.params.id,
       });
       // console.log("11111111111title",request.body.password)
       return response.redirect(`/elections/${request.params.id}/voters`);
     } catch (error) {
-      console.log(error);
-      // return response.redirect("/");
+      // console.log(error);
+      console.log(error.errors[0].message,"111111111111111111111111111111")
+      for (let i = 0; i < error.errors.length; i++) {
+        request.flash("error", error.errors[i].message);
+      }
+      return response.redirect(`/elections/${request.params.id}/voters`);
     }
   }
 );
@@ -564,6 +624,7 @@ async (request, response) => {
   });}
   catch(error){
     console.log(error)
+    
   }
 });
 
@@ -609,7 +670,13 @@ app.put(
     try {
       // console.log("222")
 
-      const startElection = await Election.startElection(request.params.id);
+      await Election.startElection(request.params.id);
+      const questions = await Question.allQuestions(request.params.id);
+      const allQuestions = questions.map((question) => {
+        return question.id;
+      });
+      // console.log("00000",allQuestions,"1111")
+      await Option.resetOptionCount(allQuestions)
       response.json(startElection);
     } catch (error) {
       console.log(error);
@@ -626,6 +693,7 @@ app.put(
       // console.log("222")
       const startElection = await Election.endElection(request.params.id);
       const resetVoterStatus = await Voter.resetVoterStatus(request.params.id);
+      // const resetOptionCount = await Option.resetOptionCount(request.params.id)
       response.json(startElection);
     } catch (error) {
       console.log(error);
@@ -680,13 +748,13 @@ app.delete(
     try {
       if (optionCount.length>2){
         // console.log(request.body.count,'1111')
-      await Option.deleteOption(request.params.oid);
-      return response.json({success:true});
+      const value = await Option.deleteOption(request.params.oid);
+      response.status(200).json(value > 0 ? true : false);
       }
-      
-        // console.log("error")
-        // return response.json({ok: false});
-      
+      else{
+        console.log("error")
+        response.status(400).json(false);
+      }
     } catch (error) {
       console.log(error);
     }

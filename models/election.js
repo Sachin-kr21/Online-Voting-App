@@ -48,9 +48,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Election.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        len: {
+          args: 1,
+          msg: "Proper election name required!",
+        },
+      },
+    },
     electionStatus: DataTypes.BOOLEAN,
-    
   }, {
     sequelize,
     modelName: 'Election',

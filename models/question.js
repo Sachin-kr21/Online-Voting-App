@@ -66,12 +66,26 @@ module.exports = (sequelize, DataTypes) => {
   }
   Question.init({
     name: {
-      type:DataTypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notNull: true,
+        len: {
+          args: 1,
+          msg: "Proper question required!",
+        },
+      },
     },
     desc: {
-      type:DataTypes.TEXT,
+      type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        notNull: true,
+        len: {
+          args: 1,
+          msg: "Proper description required!",
+        },
+      },
     },
     electionId: DataTypes.INTEGER,
   }, {

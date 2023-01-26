@@ -1,4 +1,5 @@
 'use strict';
+const bcrypt = require("bcrypt");
 const {
   Model
 } = require('sequelize');
@@ -76,8 +77,28 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Voter.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        len: {
+          args: 1,
+          msg: "Proper email required!",
+        },
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        async checkpwd(pwd) {
+          if (await bcrypt.compare("", pwd)) {
+            throw new Error("Invalid password");
+          }
+        },
+      },
+    },
     voteStatus: DataTypes.BOOLEAN,
     electionId: DataTypes.INTEGER
   }, {

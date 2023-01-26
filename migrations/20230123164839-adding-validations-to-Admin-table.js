@@ -32,11 +32,11 @@ module.exports = {
       await queryInterface.changeColumn("Admins", "password", {
         type: Sequelize.STRING,
         allowNull: false,
-        validate:{
-          notNull: true,
-          len: {
-            args: 1,
-            msg: "Proper email required!",
+        validate: {
+          async checkpwd(pwd) {
+            if (await bcrypt.compare("", pwd)) {
+              throw new Error("Invalid password");
+            }
           },
         },
       });
