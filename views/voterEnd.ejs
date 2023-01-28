@@ -13,7 +13,9 @@
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
-            <%- include('header.ejs') %>
+            <h1 class="font-medium leading-tight text-3xl mt-0 mb-2 text-green-600 font-bold">
+                Online Voting System
+            </h1>
             <h1 >THANK YOU !</h1>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <p>For election result click the below link</p><br><br>
