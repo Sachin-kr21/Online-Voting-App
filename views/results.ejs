@@ -15,6 +15,7 @@
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
+
             <% if (electionStatus){%>
                 <div class="nav">
                     <a href="/signout">Signout</a>
@@ -26,7 +27,8 @@
             <h2>
                 <%=election.name%>
             </h2>
-            <br><br>
+            <br>
+            <br>
             <form >
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <% var questionCount=1 %>
