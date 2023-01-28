@@ -432,6 +432,9 @@ app.get(
   `/elections/:id/results`,
   // connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+  const { name, electionStatus } = await Election.findByPk(
+    request.params.id
+  );
   try{const election = await Election.findByPk(request.params.id);
   const vote = await Voter.voteCount(request.params.id)
   const voteCount = vote.length
@@ -454,6 +457,7 @@ app.get(
       allQuestions,
       allOptions,
       voteCount,
+      electionStatus,
       csrfToken: request.csrfToken(),
     });}
   else{
@@ -523,8 +527,12 @@ app.post(
   }),
   (request, response) => {
     try{console.log(request.user);
-    response.redirect(`/elections/${request.params.id}/electionpage`);}
+    if (!request.user.voteStatus){response.redirect(`/elections/${request.params.id}/electionpage`);}
+    else{response.redirect(`/elections/${request.params.id}/results`)}
+    }
     catch(error){
+      // response.redirect(`/elections/${request.params.id}/results`)
+      // response.render("onGoing")
       console.log(error)}
   }
 );
