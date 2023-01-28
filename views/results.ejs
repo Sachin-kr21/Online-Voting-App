@@ -19,13 +19,14 @@
                 <div class="nav">
                     <a href="/signout">Signout</a>
                     <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/results">results</a>
+                    <br>
+                    <b>Total votes : <%= voteCount %> </b>
                 </div>
             <%}else{}%>
             <h2>
                 <%=election.name%>
             </h2>
             <br><br>
-            <b>Total votes : <%= voteCount %> </b>
             <form >
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <% var questionCount=1 %>
