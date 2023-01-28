@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>
         <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
         function launchElection(id,questionCount,optCount) {
-                console.log(optCount,"Option count")
-                console.log(questionCount,"Question count")
+                // console.log(token,"//////////////////////")
+                // console.log(questionCount,"Question count")
                 if (questionCount>=1 && optCount ){
                     fetch(`/elections/${id}/launch`, {
                     method: "put",
-                    headers: { "Content-Type": "application/json" }
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "_csrf":token
+                    })
                 })
                     .then((res) => {
                         if (res.ok) {
@@ -30,7 +37,6 @@
                 else {
                     window.alert("Atleast 2 options in every question")
                 }
-            
         }
         
     </script>

@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>
         <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
-    <script>
-    </script>
 </head>
 <body>
     <div class="grid grid-cols-6">
@@ -23,7 +22,9 @@
             <br><br>
             <b>Total votes : <%= voteCount %> </b>
             <form >
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <% var questionCount=1 %>
+            <% var maximum %> 
             <% for(let i=0;i<allQuestions.length;i++){  %>
                     <hr>
                     Question <%= questionCount %> 
@@ -41,10 +42,12 @@
                             <br>
                             <br>
                         </li>
-                        
+                        <% maximum = Math.max(0,allOptions[allQuestions[i].id][j].optionCount) %> 
                         <% } %> 
+
                     </ul>
-                    <br
+                    <br>
+                    
                 <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                 <br>
                 <% questionCount++; }%>

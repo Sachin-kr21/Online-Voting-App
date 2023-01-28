@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title><%= title %> </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/styles.css">
@@ -14,7 +15,7 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
             <h1 >THANK YOU !</h1>
-
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <p>For election result click the below link</p><br><br>
         <a id="electionPage" href="/elections/<%=election.id%>/results" class="border border-gray-300 text-gray-900 rounded p-2 w-full">/elections/<%=election.id%>/results</a>
         </div>

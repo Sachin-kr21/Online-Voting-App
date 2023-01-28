@@ -5,23 +5,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>
         Election
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
         function deleteElection(id){
             fetch(`/elections/${id}`,{
                 method: "delete",
                 headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    "_csrf":token
+                    })
             })
             .then((res)=>{
                 if (res.ok){
                     window.location.reload();
                 }
             })
-            .catch((err)=> console.error(err));
+            .catch((err)=>console.error(error));
         }
     </script>
 </head>
@@ -33,7 +40,13 @@
             <%- include('header.ejs') %>
             <div class="nav"><a href="/">home</a>><a href="/elections"> elections </a></div>
             <a href="/signout">Signout</a>
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
             <form action="/elections" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="py-3">
                     <label for="firstName">Add new election:</label>
                     <input type="text" name="name" class="border border-gray-300 text-gray-900 rounded p-2 w-full">

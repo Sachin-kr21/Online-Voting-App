@@ -17,16 +17,13 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
     static async createOption({name , questionId}) {
-      try {
         // console.log("2222222222")
         return await this.create({
           name: name,
           questionId: questionId,
           optionCount: 0
         });
-      } catch (error) {
-        console.log(error);
-      }
+      
     }
     static async updateOption({updatedName,id}){
       try{

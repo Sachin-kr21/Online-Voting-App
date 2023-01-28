@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>
         <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
         function editQuestion(id,qid){
         console.log("editing question...");
         questionName=document.getElementById("questionName").innerText
@@ -32,16 +36,17 @@
                 b.innerText="Save Changes";
             }
             else{
-                let q=document.getElementById("quName").innerHTML
-                let d=document.getElementById("deName").innerHTML
-                q.trimEnd("")
-                d.trimEnd("")
+                let q=document.getElementById("quName").innerText
+                let d=document.getElementById("deName").innerText
+                q=q.trim(" ")
+                d=d.trim(" ")
                 fetch(`/elections/${id}/questions/${qid}`, {
                     method: "put",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         name:q,
                         description:d,
+                        "_csrf":token
                     })
                 })
                 .then(
@@ -60,7 +65,8 @@
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                        count:count
+                        count:count,
+                        "_csrf":token
                     })
             })
             .then((res) => {
@@ -76,12 +82,13 @@
         }
         function editOption(id,qid,oid){
             optionName=document.getElementById(`${oid}`).innerText
-          console.log(optionName);
+        //   console.log(optionName);
           fetch(`/elections/${id}/questions/${qid}/options/${oid}`, {
                 method: "put",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name:optionName
+                    name:optionName,
+                    "_csrf":token
                 })
             })
                 .then((res) => {
@@ -118,8 +125,13 @@
                     edit question!
                 </button>
             </div>
-            
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
             <form action="/elections/<%=election.id%>/questions/<%= question.id %> " method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="py-3">
                     <label for="text-gray-900">Option :</label>
                     <input type="text" name="name" id="questionName" class="border border-gray-300 text-gray-900 rounded p-2 w-full">

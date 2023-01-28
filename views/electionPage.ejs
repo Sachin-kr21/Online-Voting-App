@@ -5,19 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     
     <title><%=title%></title>
     <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
         function endElection(id){
             // console.log("1111")
             fetch(`/elections/${id}/end`, {
                     method: "put",
-                    headers: { "Content-Type": "application/json" }
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                    "_csrf":token
+                    })
                 })
                     .then((res) => {
                         if (res.ok) {
                             window.location.replace(`/elections/${id}`);
+                            window.location.reload()
                         }
                     })
                     .catch((err) => console.log(err));

@@ -41,15 +41,11 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
     static async createQuestion({name , desc , electionId}) {
-      try {
         return await this.create({
           name: name,
           desc: desc,
           electionId: electionId,
         });
-      } catch (error) {
-        console.log(error);
-      }
     }
   static async updateQuestion({name,desc,questionId}){
     try{

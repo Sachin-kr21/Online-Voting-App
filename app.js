@@ -17,6 +17,9 @@ app.use(flash());
 
 
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser("shh! some secret string"));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 app.use(
   session({
@@ -190,61 +193,61 @@ function electionRunning(){
 
 function adminIsLoggedin()
 {
-  try{return (request,response,next)=>{
-    console.log(request.user.firstName,"wwwwwwwwwwwwwwwww")
+  return (request,response,next)=>{
+    // console.log(request.user.firstName,"wwwwwwwwwwwwwwwww")
+    console.log(request.user,"aaaa")
     if (request.user && (request.user.electionId)){
       response.redirect("/")
     }
     else{
       next()
     }
-  }}
-  catch(error){
-    console.log(error,"rrrrrrrrrrrrrrrrrrrrrrrrrrrrr")
   }
 }
 
 app.get("/", async (request, response) => {
-  if (request.user != undefined) {
+  if (request.user && request.user.firstName) {
     response.redirect("/elections");
   } else {
     // console.log(request.body.user);
-    response.render("index");
+    response.render("index",{
+    csrfToken: request.csrfToken(),
+    })
   }
 });
 
 app.get("/login", async (request, response) => {
-  if (request.user != undefined) {
+  if (request.user && request.user.firstName) {
     response.redirect("/elections");
   } else {
     // console.log(request.body.user);
     response.render("signin", {
       title: "Signin",
-      // csrfToken: request.csrfToken(),
+      csrfToken: request.csrfToken(),
     });
   }
 });
 
 app.get("/signup", async (request, response) => {
-  if (request.user != undefined) {
+  if (request.user && request.user.firstName) {
     response.redirect("/elections");
   } else {
     // console.log(request.body.user);
     response.render("signup", {
       title: "Signup",
-      // csrfToken: request.csrfToken(),
+      csrfToken: request.csrfToken(),
     });
   }
 });
 
 app.get("/signin", async (request, response) => {
-  if (request.user != undefined) {
+  if (request.user && request.user.firstName) {
     response.redirect("/elections");
   } else {
     // console.log(request.body.user);
     response.render("signin", {
       title: "Signin",
-      // csrfToken: request.csrfToken(),
+      csrfToken: request.csrfToken(),
     });
   }
 });
@@ -270,16 +273,20 @@ async (request, response) => {
     response.render("elections", {
       title: "Elections",
       allElections,
+      csrfToken: request.csrfToken(),
     });
   } else {
     response.json({ allElections });
-  }}catch(error){console.log(error)}
+    // console.log("1111")
+  }}catch(error){console.log("error")}
 });
 
 app.get(
   "/elections/:id",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async (request, response) => {
+    console.log(adminIsLoggedin(),"9999")
     try {
       const { name, electionStatus } = await Election.findByPk(
         request.params.id
@@ -289,6 +296,7 @@ app.get(
         electionName: name,
         electionStatus,
         id: request.params.id,
+        csrfToken: request.csrfToken(),
       });
     } catch (error) {
       console.log(error);
@@ -299,6 +307,7 @@ app.get(
 app.get(
   "/elections/:id/voters",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async (request, response) => {
     try{const allVoters = await Voter.getVoters(request.params.id);
     const election = await Election.findByPk(request.params.id);
@@ -308,6 +317,7 @@ app.get(
       election,
       allVoters,
       id: request.params.id,
+      csrfToken: request.csrfToken(),
     });
   }catch(error){
     console.log(error)
@@ -317,6 +327,7 @@ app.get(
 app.get(
   `/elections/:id/questions`,
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async (request, response) => {
     try{const loggedInAdmin = request.params.id;
@@ -328,7 +339,8 @@ app.get(
       id: request.params.id,
       title: "Question",
       allQuestions,
-      election
+      election,
+      csrfToken: request.csrfToken(),
     });}catch(error){console.log(error)}
   }
 );
@@ -336,6 +348,7 @@ app.get(
 app.get(
   "/elections/:id/questions/:qid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async (request, response) => {
     try {
@@ -348,6 +361,7 @@ app.get(
         question: question,
         election,
         allOptions,
+        csrfToken: request.csrfToken(),
         // editable,
       });
     } catch (error) {
@@ -359,6 +373,7 @@ app.get(
 app.get(
   "/elections/:id/electionPreview",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async (request, response) => {
     try{let allOptions = {};
     let options;
@@ -382,7 +397,8 @@ app.get(
       allQuestions,
       allOptions,
       quesCount,
-      optCount
+      optCount,
+      csrfToken: request.csrfToken(),
     });}catch(error){console.log(error)}
   }
 );
@@ -408,6 +424,7 @@ voterStatus(),
     election,
     allQuestions,
     allOptions,
+    csrfToken: request.csrfToken(),
   });}}catch(error){console.log(error)}
 });
 
@@ -436,7 +453,8 @@ app.get(
       election,
       allQuestions,
       allOptions,
-      voteCount
+      voteCount,
+      csrfToken: request.csrfToken(),
     });}
   else{
     response.redirect(`/elections/${election.id}/onGoing`)
@@ -463,13 +481,25 @@ app.get(
       const electionId = request.params.id
       response.render("voterLogin", {
         title: "Voter Login",
-        id: electionId 
+        id: electionId,
+        csrfToken: request.csrfToken(),
       });
     } catch (error) {
       console.log(error);
     }
   }
 );
+
+app.get("/elections/:id/voterEnd",
+async (request,response)=>{
+  const election = await Election.findByPk(request.params.id);  try{
+    response.render("voterEnd", {
+      title: "Voted",
+      election,
+      csrfToken: request.csrfToken()
+    });
+  }catch(error){console.log(error)}
+})
 
 app.post(
   "/session",
@@ -489,11 +519,13 @@ app.post(
   "/elections/:id/session",
   passport.authenticate("Voter", {
     failureRedirect: "back",
+    failureFlash : true
   }),
   (request, response) => {
     try{console.log(request.user);
     response.redirect(`/elections/${request.params.id}/electionpage`);}
-    catch(error){console.log(error)}
+    catch(error){
+      console.log(error)}
   }
 );
 
@@ -522,6 +554,7 @@ app.post("/users", async (request, response) => {
 app.post(
   "/elections",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async function (request, response) {
     try {
       await Election.createElection({
@@ -533,7 +566,11 @@ app.post(
       return response.redirect("/elections");
     } catch (error) {
       console.log(error);
-      return response.redirect("/");
+      for (let i = 0; i < error.errors.length; i++) {
+        request.flash("error", error.errors[i].message);
+      }
+      // console.log(".........................................")
+      return response.redirect("/elections");
     }
   }
 );
@@ -541,6 +578,7 @@ app.post(
 app.post(
   `/elections/:id/questions`,
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async function (request, response) {
     try {
@@ -553,7 +591,10 @@ app.post(
       return response.redirect(`/elections/${request.params.id}/questions`);
     } catch (error) {
       console.log(error);
-      return response.redirect("/");
+      for (let i = 0; i < error.errors.length; i++) {
+        request.flash("error", error.errors[i].message);
+      }
+      return response.redirect(`/elections/${request.params.id}/questions`);
     }
   }
 );
@@ -561,6 +602,7 @@ app.post(
 app.post(
   `/elections/:id/questions/:qid`,
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async function (request, response) {
     try {
@@ -576,7 +618,10 @@ app.post(
       );
     } catch (error) {
       console.log(error);
-      return response.redirect("/");
+      for (let i = 0; i < error.errors.length; i++) {
+        request.flash("error", error.errors[i].message);
+      }
+      return response.redirect(`/elections/${request.params.id}/questions/${request.params.qid}`);
     }
   }
 );
@@ -584,6 +629,7 @@ app.post(
 app.post(
   "/elections/:id/voters",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async function (request, response) {
   const hashedPwd = await bcrypt.hash(request.body.password , saltRounds)
 
@@ -593,11 +639,11 @@ app.post(
         password: hashedPwd,
         electionId: request.params.id,
       });
-      // console.log("11111111111title",request.body.password)
+      // console.log("11111111111title")
       return response.redirect(`/elections/${request.params.id}/voters`);
     } catch (error) {
       // console.log(error);
-      console.log(error.errors[0].message,"111111111111111111111111111111")
+      // console.log(error.errors[0].message,"111111111111111111111111111111")
       for (let i = 0; i < error.errors.length; i++) {
         request.flash("error", error.errors[i].message);
       }
@@ -615,13 +661,13 @@ async (request, response) => {
   await Voter.changeVoteStatus(request.user.id)
   for (let i in request.body){
     request.body[i]
-    const option = await Option.findByPk(request.body[i])
-    option.increment("optionCount")
+    if(request.body[i]!=request.body._csrf){
+      const option = await Option.findByPk(request.body[i])
+      option.increment("optionCount")}
+    // console.log(request.body,"/////////////////////")
   }
-  response.render("voterEnd", {
-    title: "Voted",
-    election
-  });}
+  response.redirect(`/elections/${request.params.id}/voterEnd`)
+  }
   catch(error){
     console.log(error)
     
@@ -632,6 +678,7 @@ async (request, response) => {
 app.put(
   "/elections/:id/questions/:qid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async function (request, response) {
     try{const updatedQuestion = Question.updateQuestion({
@@ -647,6 +694,7 @@ app.put(
 app.put(
   "/elections/:id/questions/:qid/options/:oid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async (request, response) => {
     try {
@@ -666,10 +714,11 @@ app.put(
 app.put(
   "/elections/:id/launch",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async (request, response) => {
+    // console.log(request.body,"9989////")
     try {
       // console.log("222")
-
       await Election.startElection(request.params.id);
       const questions = await Question.allQuestions(request.params.id);
       const allQuestions = questions.map((question) => {
@@ -688,6 +737,7 @@ app.put(
 app.put(
   "/elections/:id/end",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async (request, response) => {
     try {
       // console.log("222")
@@ -705,6 +755,7 @@ app.put(
 app.delete(
   "/elections/:id",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async function (request, response) {
     // console.log("We have to delete a Todo with ID: ", request.params.id);
     try {
@@ -719,6 +770,7 @@ app.delete(
 app.delete(
   "/elections/:id/questions/:qid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async (request, response) => {
     const quesCount= await Question.allQuestions(request.params.id)
@@ -742,6 +794,7 @@ app.delete(
 app.delete(
   "/elections/:id/questions/:qid/:oid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   manageQuestions(),
   async (request, response) => {
     const optionCount= await Option.getOptions(request.params.qid)
@@ -764,12 +817,14 @@ app.delete(
 app.delete(
   "/elections/:id/voters/:vid",
   connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
   async function (request, response) {
     // console.log(request.params.vid)
     try {
       await Voter.deleteVoter(request.params.vid);
       return response.json({ success: true });
     } catch (error) {
+      console.log("3333")
       return response.status(422).json(error);
     }
   }

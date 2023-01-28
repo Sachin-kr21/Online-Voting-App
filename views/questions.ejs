@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>
         <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/styles.css">
     <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
         function deleteQuestion(id,qid,QuestionsCount){
         fetch(`/elections/${id}/questions/${qid}`, {
                 method: "delete",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                        count:QuestionsCount
+                        count:QuestionsCount,
+                        "_csrf":token
                     })
             })
                 .then((res) => {
@@ -36,11 +41,17 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
             <a href="/signout">Signout</a>
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
             <br>
             <div class="nav">
                 <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/questions">questions</a>
             </div>
             <form action="/elections/<%=id%>/questions " method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="py-3">
                     <label for="text-gray-900">Question name:</label>
                     <input type="text" name="name" id="questionName" class="border border-gray-300 text-gray-900 rounded p-2 w-full">

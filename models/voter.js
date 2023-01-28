@@ -23,12 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     }
     
     static async createVoter({ id , password ,electionId}) {
-      try {
-        return await this.create({ email : id, password: password ,voteStatus: false ,electionId: electionId});
-      } catch (error) {
-        console.log(error);
-        
-      }
+      return await this.create({ email : id, password: password ,voteStatus: false ,electionId: electionId});
     }
 
     static deleteVoter(id) {

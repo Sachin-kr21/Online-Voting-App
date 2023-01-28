@@ -17,11 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static async createElection({ name , adminId}) {
-      try {
+      
         return await this.create({ name: name, electionStatus: false ,adminId : adminId});
-      } catch (error) {
-        console.log(error);
-      }
+      
     }
 
     static deleteElection(id) {
