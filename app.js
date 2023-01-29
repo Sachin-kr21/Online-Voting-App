@@ -471,6 +471,7 @@ app.get("/elections/:id/onGoing",
     try {
       response.render("onGoing", {
         title: "onGoing Election",
+        csrfToken: request.csrfToken()
       });
     } catch (error) {
       console.log(error);
@@ -528,7 +529,9 @@ app.post(
   (request, response) => {
     try{console.log(request.user);
     if (!request.user.voteStatus){response.redirect(`/elections/${request.params.id}/electionpage`);}
-    else{response.redirect(`/elections/${request.params.id}/results`)}
+    else{
+      request.flash("error","Already voted")
+      response.redirect(`/elections/${request.params.id}/onGoing`)}
     }
     catch(error){
       // response.redirect(`/elections/${request.params.id}/results`)

@@ -10,8 +10,14 @@
     
 </head>
 <body>
+
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                        <li> <%= messages.error[i] %></li>
+                <% } %>
+              <% } %>
             <h1>Election is ongoing please wait till the election ends</h1>
         </div>
     </div>

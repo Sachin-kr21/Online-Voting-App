@@ -10,10 +10,26 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Proper Question required!",
+          },
+        },
       },
       desc: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Proper description required!",
+          },
+        },
       },
       createdAt: {
         allowNull: false,

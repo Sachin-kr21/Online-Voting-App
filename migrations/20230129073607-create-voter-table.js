@@ -10,10 +10,26 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: true,
+          len: {
+            args: 1,
+            msg: "Proper email required!",
+          },
+      },
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          async checkpwd(pwd) {
+            if (await bcrypt.compare("", pwd)) {
+              throw new Error("Invalid password");
+            }
+          },
+      },
       },
       createdAt: {
         allowNull: false,
