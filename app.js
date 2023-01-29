@@ -274,6 +274,8 @@ async (request, response) => {
       title: "Elections",
       allElections,
       csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,
     });
   } else {
     response.json({ allElections });
@@ -297,6 +299,8 @@ app.get(
         electionStatus,
         id: request.params.id,
         csrfToken: request.csrfToken(),
+        fname: request.user.firstName,
+        lname: request.user.lastName,
       });
     } catch (error) {
       console.log(error);
@@ -318,6 +322,8 @@ app.get(
       allVoters,
       id: request.params.id,
       csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,
     });
   }catch(error){
     console.log(error)
@@ -341,6 +347,8 @@ app.get(
       allQuestions,
       election,
       csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,
     });}catch(error){console.log(error)}
   }
 );
@@ -362,6 +370,8 @@ app.get(
         election,
         allOptions,
         csrfToken: request.csrfToken(),
+        fname: request.user.firstName,
+        lname: request.user.lastName,
         // editable,
       });
     } catch (error) {
@@ -399,6 +409,8 @@ app.get(
       quesCount,
       optCount,
       csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,
     });}catch(error){console.log(error)}
   }
 );
@@ -459,6 +471,8 @@ app.get(
       voteCount,
       electionStatus,
       csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,
     });}
   else{
     response.redirect(`/elections/${election.id}/onGoing`)

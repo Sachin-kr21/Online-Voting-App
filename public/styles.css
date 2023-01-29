@@ -1,0 +1,8 @@
+body {
+    color: black;
+    font-family: "Courier New", Courier, monospace;
+  }
+.all-items:hover .trash-icon {
+    display: block;
+  }
+  

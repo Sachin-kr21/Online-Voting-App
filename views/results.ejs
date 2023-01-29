@@ -18,6 +18,8 @@
 
             <% if (electionStatus){%>
                 <div class="nav">
+                    <b><%= fname   %> 
+                        <%= lname   %> </b><br>
                     <a href="/signout">Signout</a>
                     <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/results">results</a>
                     <br>

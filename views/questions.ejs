@@ -9,7 +9,7 @@
         <%= title %> 
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="/public/styles.css">
     <script>
         var token = document
         .querySelector('meta[name="csrf-token"]')
@@ -40,6 +40,8 @@
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
+            <b><%= fname   %> 
+                <%= lname   %> </b><br>
             <a href="/signout">Signout</a>
             <% if(messages && messages.error && messages.error.length > 0)  { %>
                 <% for(var i=0; i<messages.error.length; i++) { %>
