@@ -8,19 +8,23 @@
     <title>
         <%= title %> 
     </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
 <body>
     <div class="grid grid-cols-6">
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
-
+            <script>
+                var nameL = ''
+                var countL = ''
+            </script>
             <% if (electionStatus){%>
                 <div class="nav">
-                    <b><%= fname   %> 
-                        <%= lname   %> </b><br>
-                    <a href="/signout">Signout</a>
+                    <b><%= //fname   %> 
+                        <%= //lname   %> </b><br>
+                    <a href="/signout">Signout</a><br>
                     <a href="/">home</a> > <a href="/elections">elections</a> > <a href="/elections/<%=election.id%>"><%=election.name%></a> > <a href="/elections/<%=election.id%>/results">results</a>
                     <br>
                     <b>Total votes : <%= voteCount %> </b>
@@ -60,13 +64,66 @@
                         <% maximum = Math.max(0,allOptions[allQuestions[i].id][j].optionCount) %> 
                         <% } %> 
 
-                    </ul>
-                    <br>
+                    </ul> 
+                    <section>
+                        <canvas id="<%=questionCount%>" ></canvas>
+                        <% const nameList = []; %> 
+                        <% const countList = []; %> 
+                        <%for(j in allOptions[allQuestions[i].id]){%>
+                        <% nameList.push(allOptions[allQuestions[i].id][j].name)%> 
+                        <% countList.push(parseInt(allOptions[allQuestions[i].id][j].optionCount))%> 
+                        <% } %> 
+                        <%= console.log(nameList) %> 
+                        <%= console.log(countList) %> 
+                        <p type="hidden" id="<%=allQuestions[i].id%>" style="color:white"><%= nameList %> </p>
+                        <p type="hidden" id="<%=allQuestions[i].id + 1000%>" style="color:white"><%= countList %> </p>
+                        <script>
+                            function toNumber(value) {
+                                return Number(value);
+                            }
+                            nameL=document.getElementById("<%=allQuestions[i].id%>").innerText
+                            countL=document.getElementById("<%=allQuestions[i].id + 1000%>").innerText
+                            console.log(nameL,countL)
+                            var name1 = nameL.split(",");
+                            var count1 = countL.split(",");
+                            // console.log(name1)
+                            var count1 = count1.map(toNumber);
+                            // console.log(count1)
+                            new Chart("<%=questionCount%>", {
+                            type: "bar",
+                            data: {
+                                labels: name1,
+                                datasets: [{
+                                labels: "vote",
+                                backgroundColor: "green",
+                                data: count1
+                                }]
+                            },
+                            options: {
+                            scales: {
+                                yAxes: [{
+                                    display: true,
+                                    ticks: {
+                                        beginAtZero: true   // minimum value will be 0.
+                                    }
+                                }]
+                            },
+                            legend: {
+                                labels: {
+                                filter: (legendItem, data) => (typeof legendItem.text !== 'undefined')
+                                }
+                            }
+                            }});
+                        </script>
                     
-                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                <br>
-                <% questionCount++; }%>
-            </form>
+                    </section>
+                    <br>
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                    <br>
+                    <%= console.log("next") %> 
+                    <% questionCount++; }%>
+                </form>
+                
         </div>
     </div>
 </body>

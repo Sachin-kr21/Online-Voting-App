@@ -471,8 +471,8 @@ app.get(
       voteCount,
       electionStatus,
       csrfToken: request.csrfToken(),
-      fname: request.user.firstName,
-      lname: request.user.lastName,
+      // fname: request.user.firstName,
+      // lname: request.user.lastName,
     });}
   else{
     response.redirect(`/elections/${election.id}/onGoing`)
