@@ -8,7 +8,7 @@
     <title>
         <%= title %> 
     </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js"> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
@@ -77,46 +77,47 @@
                         <%= console.log(countList) %> 
                         <p type="hidden" id="<%=allQuestions[i].id%>" style="color:white"><%= nameList %> </p>
                         <p type="hidden" id="<%=allQuestions[i].id + 1000%>" style="color:white"><%= countList %> </p>
-                        <script>
-                            function toNumber(value) {
-                                return Number(value);
-                            }
-                            nameL=document.getElementById("<%=allQuestions[i].id%>").innerText
-                            countL=document.getElementById("<%=allQuestions[i].id + 1000%>").innerText
-                            console.log(nameL,countL)
-                            var name1 = nameL.split(",");
-                            var count1 = countL.split(",");
-                            // console.log(name1)
-                            var count1 = count1.map(toNumber);
-                            // console.log(count1)
-                            new Chart("<%=questionCount%>", {
-                            type: "bar",
-                            data: {
-                                labels: name1,
-                                datasets: [{
-                                labels: "vote",
-                                backgroundColor: "green",
-                                data: count1
-                                }]
-                            },
-                            options: {
-                            scales: {
-                                yAxes: [{
-                                    display: true,
-                                    ticks: {
-                                        beginAtZero: true   // minimum value will be 0.
-                                    }
-                                }]
-                            },
-                            legend: {
-                                labels: {
-                                filter: (legendItem, data) => (typeof legendItem.text !== 'undefined')
-                                }
-                            }
-                            }});
-                        </script>
+                        
                     
                     </section>
+                    <script>
+                        function toNumber(value) {
+                            return Number(value);
+                        }
+                        nameL=document.getElementById("<%=allQuestions[i].id%>").innerText
+                        countL=document.getElementById("<%=allQuestions[i].id + 1000%>").innerText
+                        console.log(nameL,countL)
+                        var name1 = nameL.split(",");
+                        var count1 = countL.split(",");
+                        // console.log(name1)
+                        var count1 = count1.map(toNumber);
+                        // console.log(count1)
+                        new Chart("<%=questionCount%>", {
+                        type: "bar",
+                        data: {
+                            labels: name1,
+                            datasets: [{
+                            labels: "vote",
+                            backgroundColor: "green",
+                            data: count1
+                            }]
+                        },
+                        options: {
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                ticks: {
+                                    beginAtZero: true   // minimum value will be 0.
+                                }
+                            }]
+                        },
+                        legend: {
+                            labels: {
+                            filter: (legendItem, data) => (typeof legendItem.text !== 'undefined')
+                            }
+                        }
+                        }});
+                    </script>
                     <br>
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                     <br>
