@@ -8,7 +8,6 @@
     <title>
         <%= title %> 
     </title>
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.min.js"> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </head>
@@ -84,7 +83,7 @@
                         function toNumber(value) {
                             return Number(value);
                         }
-                        nameL=document.getElementById("<%=allQuestions[i].id%>").innerText
+                        function resultGraph(){nameL=document.getElementById("<%=allQuestions[i].id%>").innerText
                         countL=document.getElementById("<%=allQuestions[i].id + 1000%>").innerText
                         console.log(nameL,countL)
                         var name1 = nameL.split(",");
@@ -93,16 +92,16 @@
                         var count1 = count1.map(toNumber);
                         // console.log(count1)
                         new Chart("<%=questionCount%>", {
-                        type: "bar",
-                        data: {
-                            labels: name1,
-                            datasets: [{
-                            labels: "vote",
+                            type: "bar",
+                            data: {
+                                labels: name1,
+                                datasets: [{
+                                    labels: "vote",
                             backgroundColor: "green",
                             data: count1
-                            }]
-                        },
-                        options: {
+                        }]
+                    },
+                    options: {
                         scales: {
                             yAxes: [{
                                 display: true,
@@ -113,10 +112,12 @@
                         },
                         legend: {
                             labels: {
-                            filter: (legendItem, data) => (typeof legendItem.text !== 'undefined')
+                                filter: (legendItem, data) => (typeof legendItem.text !== 'undefined')
                             }
                         }
-                        }});
+                    }});}
+
+                    window.addEventListener("load",resultGraph)
                     </script>
                     <br>
                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
