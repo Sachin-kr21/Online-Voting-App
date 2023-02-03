@@ -520,6 +520,21 @@ async (request,response)=>{
   }catch(error){console.log(error)}
 })
 
+app.get("/updatePassword",
+  connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
+  async (request,response) => {
+    response.render("updatePassword",
+    {
+      id: request.params.id,
+      title: "Update Password",
+      csrfToken: request.csrfToken(),
+      fname: request.user.firstName,
+      lname: request.user.lastName,}
+      )
+  }
+  )
+
 app.post(
   "/session",
   passport.authenticate("Admin", {
@@ -699,6 +714,33 @@ async (request, response) => {
   }
 });
 
+app.post("/updatePassword",
+connectEnsureLogin.ensureLoggedIn(),
+  adminIsLoggedin(),
+async (request,response)=> {
+  if (!(await bcrypt.compare(request.body.oldPassword, request.user.password))){
+    request.flash("error","Incorrect Password")
+      return response.redirect("/updatePassword")
+  }
+  if (!request.body.newPassword){
+    request.flash("error","New Password cannot be empty")
+    return response.redirect("/updatePassword")  
+  }
+  
+  // console.log("user new pwd",request.body.newPassword)
+  // console.log("user pwd  ",request.body.oldPassword)
+  try{
+    // console.log("Password Matched")
+    const hashedPwd = await bcrypt.hash(request.body.newPassword , saltRounds)
+    // console.log(hashedPwd)
+    const id = request.user.id
+    await Admin.updatePassword({hashedPwd,id})
+    request.flash("error","Password Changed")
+    return response.redirect("/elections")
+  }
+    catch(error){console.log(error)}
+  }
+)
 
 app.put(
   "/elections/:id/questions/:qid",

@@ -16,6 +16,20 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "adminId",
       });
     }
+
+    static async updatePassword({hashedPwd,id}){
+      console.log("11111",hashedPwd)
+      try{
+        return await this.update({
+          password : hashedPwd,
+        },{where:{
+          id:id
+        }})
+      }catch(error){
+        console.log(error,"error");
+      }
+    }
+
   }
   Admin.init(
     {
